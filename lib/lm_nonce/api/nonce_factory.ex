@@ -11,8 +11,4 @@ defmodule LmNonce.Api.NonceFactory do
   Creates a new nonce payload of specific length.
   """
   @callback create(length()) :: Nonce.nonce_value()
-
-  def create!(impl, length) do
-    impl.create(length)
-  end
 end

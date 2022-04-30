@@ -7,7 +7,6 @@ defmodule LmNonce do
   """
 
   alias LmNonce.Api.Nonce
-  alias LmNonce.Api.NonceFactory
 
   @default_nonce_length 42
 
