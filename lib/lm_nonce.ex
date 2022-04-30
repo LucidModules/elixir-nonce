@@ -3,6 +3,7 @@ defmodule LmNonce do
   TODO: write about LmNonce usage and configuration
   This is the entry point of LmNonce library.
   TODO: rename to NonceBehaviour (or NonceStoreBehaviour) and NonceFactoryBehaviour
+  TODO: for NonceEts a server must be started by the user. Alternatively, provide init callback
   """
 
   alias LmNonce.Api.Nonce
@@ -26,11 +27,13 @@ defmodule LmNonce do
 
   defp verify_not_expired({:ok, %{expires: expires}}) do
     now = DateTime.now!("Etc/UTC")
-    case DateTime.compare(expires, now) do
-      :lt -> false
+
+    case DateTime.compare(now, expires) do
+      :gt -> false
       _ -> true
     end
   end
+
   defp verify_not_expired(_), do: false
 
   defp create_nonce(nonce_value) when is_binary(nonce_value) do
@@ -46,7 +49,6 @@ defmodule LmNonce do
   end
 
   defp nonce_impl() do
-    #    TODO: for NonceEts a server must be started by the user. Alternatively, provide init callback
     Application.get_env(:lm_nonce, :nonce, LmNonce.Ets.NonceEts)
   end
 

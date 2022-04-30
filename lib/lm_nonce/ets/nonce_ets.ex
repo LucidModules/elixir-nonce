@@ -24,10 +24,10 @@ defmodule LmNonce.Ets.NonceEts do
   """
   @spec get_and_dispose(Nonce.nonce_value()) :: {:ok, Nonce.t()} | {:error, binary()}
   @impl true
-  def get_and_dispose(nonce_id) when is_binary(nonce_id) do
-    case NonceServer.get_and_dispose(nonce_id) do
+  def get_and_dispose(nonce_value) when is_binary(nonce_value) do
+    case NonceServer.get_and_dispose(nonce_value) do
       nil -> {:error, "Invalid nonce"}
-      nonce -> {:ok, nonce}
+      {_key, nonce} -> {:ok, nonce}
     end
   end
 end

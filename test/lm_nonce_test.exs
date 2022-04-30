@@ -1,14 +1,10 @@
 defmodule LmNonceTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   doctest LmNonce
 
   import Mox
 
   setup :verify_on_exit!
-
-  alias LmNonce.Factory.Base64NonceFactory
-  alias LmNonce.Ets.NonceEts
-  alias LmNonce.Ets.NonceServer
 
   describe "given LmNonce::create/1" do
     setup do

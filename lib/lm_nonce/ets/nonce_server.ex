@@ -30,18 +30,17 @@ defmodule LmNonce.Ets.NonceServer do
   @doc """
   GenServer.handle_call/3 callback
   """
-  @spec handle_call(atom(), Nonce.t()) :: Nonce.t() | nil
-  def handle_call(:insert, %{value: value} = nonce) do
+  def handle_call({:insert, %{value: value} = nonce}, _from, state) do
     case :ets.insert_new(@ets_name, {value, nonce}) do
-      true -> nonce
-      _ -> nil
+      true -> {:reply, nonce, state}
+      _ -> {:reply, nil, state}
     end
   end
 
-  def handle_call(:get_and_dispose, nonce) when is_binary(nonce) do
+  def handle_call({:get_and_dispose, nonce}, _from, state) when is_binary(nonce) do
     case :ets.take(@ets_name, nonce) do
-      [result | _] -> result
-      _ -> nil
+      [result | _] -> {:reply, result, state}
+      _ -> {:reply, nil, state}
     end
   end
 
@@ -49,12 +48,12 @@ defmodule LmNonce.Ets.NonceServer do
   Insert a new nonce
   """
   @spec insert(Nonce.t()) :: {:ok, Nonce.t()} | {:error, binary()}
-  def insert(nonce), do: GenServer.call(__MODULE__, :insert, nonce)
+  def insert(nonce), do: GenServer.call(__MODULE__, {:insert, nonce})
 
   @doc """
   Retrieve nonce and remove it (if exists)
   """
   @spec get_and_dispose(Nonce.nonce_value()) :: Nonce.t() | nil
   def get_and_dispose(nonce_value) when is_binary(nonce_value),
-    do: GenServer.call(__MODULE__, :get_and_dispose, nonce_value)
+    do: GenServer.call(__MODULE__, {:get_and_dispose, nonce_value})
 end
